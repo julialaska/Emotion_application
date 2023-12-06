@@ -1,0 +1,34 @@
+# Pliki i katalogi związane z wirtualnym środowiskiem
+venv/
+.env
+
+# Plik bazy danych SQLite
+db.sqlite3
+
+# Katalog generowanych plików
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# Pliki logów
+*.log
+
+# Katalogi z plikami statycznymi i mediami
+/static/
+/media/
+
+# Pliki cache
+/cache/
+
+# Pliki generowane dynamicznie
+.sessions/
+*.db
+
+
+# Plik projektu PyCharm
+.idea/
+
+# Plik konfiguracyjny
+config.json
