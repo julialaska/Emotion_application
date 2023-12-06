@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #171923;">
+    <div>
+      {% for post in posts %}
+        <div style="padding: 1.5rem; margin-bottom: 1rem; margin-top: 1.5rem; border: 1px solid #cbd5e0; border-radius: 0.375rem; background: #2d3748; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+
+          <h2 style="font-size: 1.25rem; font-family: 'Inter', sans-serif; color: #edf2f7; margin-bottom: 0.5rem;">{{ post.title }}</h2>
+          <p style="font-size: 0.875rem; color: #a0aec0; margin-bottom: 0.75rem;">@{{ post.user.username }}</p>
+          <p style="font-size: 1rem; color: #e2e8f0; margin-bottom: 1rem;">{{ post.content }}</p>
+          <p style="font-size: 0.75rem; color: #a0aec0; margin-bottom: 1rem;">{{ post.created_at|date:'Y-m-d H:i:s' }}</p>
+
+<!--          <div style="display: flex; justify-content: space-between; align-items: center;">-->
+<!--            <button style="flex: 1; font-size: 0.875rem; border-radius: 9999px; padding: 0.5rem 1rem; cursor: pointer; transition: background-color 0.3s ease; {% if user.is_authenticated %}background-color: #e2e8f0; color: #2d3748;{% else %}background-color: #4299e1; color: #ffffff;{% endif %}">DELETE</button>-->
+<!--            <button style="flex: 1; font-size: 0.875rem; border-radius: 9999px; padding: 0.5rem 1rem; cursor: pointer; transition: background-color 0.3s ease; {% if user.is_authenticated %}background-color: #4299e1; color: #ffffff;{% else %}background-color: rgba(255, 255, 255, 0.3); color: #ffffff;{% endif %}">VISUALIZE</button>-->
+<!--          </div>-->
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
