@@ -1,6 +1,6 @@
 import re
 from collections import namedtuple
-
+from operator import attrgetter
 from sklearn import svm
 import joblib
 from nltk import word_tokenize
@@ -40,7 +40,8 @@ def register(request):
         if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
             return JsonResponse({"error": "Username or email already exists."}, status=400)
 
-        user = User.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+        user = User.objects.create_user(username=username, password=password, email=email, first_name=first_name,
+                                        last_name=last_name)
 
         token, created = Token.objects.get_or_create(user=user)
 
@@ -93,7 +94,6 @@ def user_detail(request):
 
 def user_posts(request):
     u_posts = Post.objects.filter(user=request.user).order_by('-created_at')
-
     context = {'user_posts': u_posts}
     return render(request, 'user_posts.html', context)
 
@@ -172,29 +172,22 @@ def preprocess_text(text):
     return result
 
 
-from operator import attrgetter
-
 def visualize_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
-    # Użyj treści posta jako tekstu do predykcji
     new_text = post.content
     vectorized_new_text = loaded_svm_vectorizer.transform([preprocess_text(new_text)])
 
-    # Pobierz prawdopodobieństwa dla każdej klasy
     predictions_proba_svm = loaded_svm_model.predict_proba(vectorized_new_text)
 
-    # Znajdź indeks klasy z najwyższym prawdopodobieństwem
     predicted_label_svm = loaded_svm_label_encoder.inverse_transform(predictions_proba_svm.argmax(axis=1))[0]
 
-    # Pobierz prawdopodobieństwo dla przewidzianej klasy
     probability_svm = predictions_proba_svm.max()
 
     Prediction = namedtuple('Prediction', ['label', 'probability'])
     predictions_proba_svm_and_labels = [Prediction(label, prob) for label, prob in
                                         zip(loaded_svm_label_encoder.classes_, predictions_proba_svm[0])]
 
-    # Posortuj listę według prawdopodobieństw (malejąco)
     predictions_proba_svm_and_labels.sort(key=attrgetter('probability'), reverse=True)
 
     context = {
@@ -205,6 +198,3 @@ def visualize_post(request, post_id):
     }
 
     return render(request, 'visualize_post.html', context)
-
-
-
