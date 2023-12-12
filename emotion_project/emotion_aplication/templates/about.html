@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #171923;">
+    <div class="card mb-3" style="max-width: 1000px; background: #2d3748; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img
+            src="https://mdbcdn.b-cdn.net/wp-content/uploads/2020/06/vertical.webp"
+            alt="Trendy Pants and Shoes"
+            class="img-fluid rounded-start"
+            style="height: 100%"
+          />
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+             {% if user.is_authenticated %}
+                <h5 class="card-title" style="font-family: 'Inter', sans-serif; color: #edf2f7;">
+                    {{ user.username }}
+                </h5>
+                <p class="card-text" style="font-size: 0.875rem; color: #a0aec0; margin-bottom: 0.75rem;">
+                    Email: {{ user.email }}
+                </p>
+                <p class="card-text" style="font-size: 0.875rem; color: #edf2f7; margin-bottom: 0.75rem;">
+                    Name: {{ user.first_name }}
+                </p>
+                <p class="card-text" style="font-size: 0.875rem; color: #edf2f7; margin-bottom: 0.75rem;">
+                    Last name: {{ user.last_name }}
+                </p>
+             {% endif %}
+            <p class="card-text" style="font-size: 1rem; color: #e2e8f0; margin-bottom: 1rem;">
+               {% if user.is_authenticated %}
+                    About {{ user.username }} <br/>
+
+                    Welcome to my personal space! I'm {{ user.first_name }} {{ user.last_name }}, an enthusiastic individual passionate about sharing my experiences and thoughts with the world. As a member of this community, I believe in fostering connections and building a supportive environment.
+
+                    Currently residing at the intersection of creativity and technology, I explore various interests, from {{ user.email }} to delving into the latest trends in the digital landscape. Join me on this journey as we navigate through the vast realms of knowledge and inspiration.
+
+                    Feel free to connect, engage, and explore alongside me. Let's make every moment count and create meaningful experiences together!
+               {% endif %}
+
+            </p>
+            <p class="card-text" style="font-size: 0.75rem; color:  #a0aec0; margin-bottom: 1rem;">
+              <small class="text">Last updated 3 mins ago</small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

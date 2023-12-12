@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #171923;">
+    <div>
+       <h1 style="font-size: 2rem; font-family: 'Inter', sans-serif; color: #edf2f7; margin-bottom: 1rem;" class="text-center m-3">My Posts</h1>
+      {% if user_posts %}
+        {% for post in user_posts %}
+          <div style="padding: 1.5rem; margin-bottom: 1rem; margin-top: 1.5rem; border: 1px solid #cbd5e0; border-radius: 0.375rem; background: #2d3748; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+            <h2 style="font-size: 1.25rem; font-family: 'Inter', sans-serif; color: #edf2f7; margin-bottom: 0.5rem;">{{ post.title }}</h2>
+            <p style="font-size: 0.875rem; color: #a0aec0; margin-bottom: 0.75rem;">@{{ post.user.username }}</p>
+            <p style="font-size: 1rem; color: #e2e8f0; margin-bottom: 1rem; white-space: pre-line;">{{ post.content }}</p>
+            <p style="font-size: 0.75rem; color: #a0aec0; margin-bottom: 1rem;">{{ post.created_at|date:'Y-m-d H:i:s' }}</p>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <a href="{% url 'edit_post' post.id %}" style="font-size: 0.875rem; border-radius: 20px; padding: 0.5rem 1.3rem; cursor: pointer; background-color: rgba(66,153,225,0.68); color: #ffffff;">Edit</a>
+              <a href="{% url 'delete_post' post.id %}" style="font-size: 0.875rem; border-radius: 20px; padding: 0.5rem 0.875rem; cursor: pointer; background-color: rgba(229,62,62,0.65); color: #ffffff;">Delete</a>
+              <a href="{% url 'visualize_post' post.id %}" style="font-size: 0.875rem; border-radius: 20px; padding: 0.5rem 0.875rem; cursor: pointer; background-color: rgba(56,161,105,0.6); color: #ffffff;">Visualize</a>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>No posts available yet.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

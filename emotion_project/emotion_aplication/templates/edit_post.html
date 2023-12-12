@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #171923;">
+    <div>
+       <h1 style="font-size: 2rem; font-family: 'Inter', sans-serif; color: #edf2f7; margin-bottom: 1rem;" class="text-center m-3">Edit Post</h1>
+      <div style="padding: 1.5rem; margin-bottom: 1rem; margin-top: 1.5rem; border: 1px solid #cbd5e0; border-radius: 0.375rem; background: #2d3748; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+        <form method="post">
+          {% csrf_token %}
+          <label for="title" style="color: #a0aec0; font-size: 0.875rem; margin-bottom: 0.5rem;">Title:</label>
+          <input type="text" id="title" name="title" value="{{ post.title }}" style="padding: 0.5rem; width: 100%; margin-bottom: 1rem; border-radius: 0.25rem; background-color: #4a5568; color: #e2e8f0; border: 1px solid #cbd5e0;">
+
+          <label for="content" style="color: #a0aec0; font-size: 0.875rem; margin-bottom: 0.5rem;">Content:</label>
+          <textarea id="content" name="content" style="padding: 0.5rem; width: 100%; margin-bottom: 1rem; border-radius: 0.25rem; background-color: #4a5568; color: #e2e8f0; border: 1px solid #cbd5e0;">{{ post.content }}</textarea>
+
+          <button type="submit" style="font-size: 0.875rem; border-radius: 20px; padding: 0.5rem 1.3rem; cursor: pointer; background-color: rgba(66,153,225,0.68); color: #ffffff;">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

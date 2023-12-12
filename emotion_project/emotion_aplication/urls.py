@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import hero_view, posts_view, register, handleLogin, logout_view
+from .views import hero_view, posts_view, register, handleLogin, logout_view, user_detail, user_posts, create_post_view, delete_post, edit_post, visualize_post
+
 
 urlpatterns = [
     path('', hero_view, name='hero_view'),
@@ -7,4 +8,10 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', handleLogin, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('about/', user_detail, name='user_detail'),
+    path('my_posts/', user_posts, name='user_posts'),
+    path('create_post/', create_post_view, name='create_post_view'),
+    path('delete_post/<int:post_id>/', delete_post, name='delete_post'),
+    path('visualize_post/<int:post_id>/', visualize_post, name='visualize_post'),
+    path('edit_post/<int:post_id>/', edit_post, name='edit_post'),
 ]

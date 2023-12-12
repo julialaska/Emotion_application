@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #171923;">
+    <div style="max-width: 30rem; width: 100%; padding: 2rem; background-color: #ffffff; border-radius: 0.375rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+      <h1 style="font-size: 2rem; margin-bottom: 1rem;">Create a new post</h1>
+      <form method="post" action="{% url 'create_post_view' %}">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label for="title" style="display: block; font-size: 1rem; color: #2d3748; margin-bottom: 0.5rem;">Post Title</label>
+          <input type="text" id="title" name="title" value="{{ newPost.title }}" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 0.375rem;">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label for="content" style="display: block; font-size: 1rem; color: #2d3748; margin-bottom: 0.5rem;">Post Content</label>
+          <textarea id="content" name="content" style="width: 100%; padding: 0.5rem; border: 1px solid #cbd5e0; border-radius: 0.375rem;">{{ newPost.content }}</textarea>
+        </div>
+
+        <button type="submit" style="background-color: #4299e1; color: #ffffff; padding: 0.75rem 1.5rem; border: none; border-radius: 0.375rem; cursor: pointer; transition: background-color 0.3s ease;">
+          Create Post
+        </button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

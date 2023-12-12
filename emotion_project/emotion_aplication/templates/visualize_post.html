@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="background-color: #171923;">
+    <a href="{% url 'user_posts' %}" style="text-decoration: none; color: white; font-size: 1.5rem; margin-left: 3rem; margin-top: 1rem;">
+      &#x2190; Back to My posts
+    </a>
+</div>
+  <div style="min-height: 100vh; display: flex; flex-direction: row; align-items: center; justify-content: center; background: #171923;">
+    <div style="flex: 1; width: 100%; max-width: 600px; text-align: center; margin: auto;">
+     <div style="padding: 1.5rem; margin-bottom: 1rem; margin-top: 1.5rem; border: 1px solid #cbd5e0; border-radius: 0.375rem; background: #2d3748; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+            <h2 style="font-size: 1.25rem; font-family: 'Inter', sans-serif; color: #edf2f7; margin-bottom: 0.5rem;">{{ post.title }}</h2>
+            <p style="font-size: 0.875rem; color: #a0aec0; margin-bottom: 0.75rem;">@{{ post.user.username }}</p>
+            <p style="font-size: 1rem; color: #e2e8f0; margin-bottom: 1rem; white-space: pre-line;">{{ post.content }}</p>
+            <p style="font-size: 0.75rem; color: #a0aec0; margin-bottom: 1rem;">{{ post.created_at|date:'Y-m-d H:i:s' }}</p>
+     </div>
+
+      <p style="font-size: 1.3rem; color: #e2e8f0; margin-bottom: 0.5rem;">Predicted Label (SVM): {{ predicted_label_svm }}</p>
+      <p style="font-size: 1.3rem; color: #e2e8f0; margin-bottom: 0.5rem;">Probability (SVM): {{ probability_svm|floatformat:2 }}</p>
+
+      <p style="font-size: 1.3rem; color: #e2e8f0; margin-bottom: 0.5rem;">Other Predicted Probabilities (SVM):</p>
+      <ul style="font-size: 1rem; color: #e2e8f0; margin-bottom: 1rem; list-style-type: none; padding: 0;">
+        {% for prob_label in predictions_proba_svm_and_labels %}
+          <li>{{ prob_label.label }}: {{ prob_label.probability|floatformat:2 }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div style="flex: 1; width: 100%; max-width: 600px; order: 2; margin: auto;">
+      <div id="plotly-pie-chart"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
+    var plotlyLabels = [ {% for prob_label in predictions_proba_svm_and_labels %} "{{ prob_label.label }}", {% endfor %} ];
+    var plotlyData = [{
+      values: [ {% for prob_label in predictions_proba_svm_and_labels %} {{ prob_label.probability|floatformat:2 }}, {% endfor %} ],
+      labels: plotlyLabels,
+      type: 'pie',
+      hole: .4,
+      textinfo: 'label+percent',
+      insidetextorientation: 'radial',
+      marker: {
+        colors: ['#164aa2', '#407bd7', '#6f97e3', '#afc5ea', '#cbd5e0'],  // Zmień kolory na pasujące do koloru tła// Dodaj więcej kolorów w razie potrzeby
+        line: {
+          color: '#171923',
+        }
+      },
+    }];
+
+    var plotlyLayout = {
+      showlegend: true,
+      height: 600,  // Zwiększ wysokość wykresu
+      width: 600,   // Zwiększ szerokość wykresu
+      paper_bgcolor: 'rgba(0,0,0,0)',  // Ustaw kolor tła na przezroczysty
+      plot_bgcolor: 'rgba(0,0,0,0)',   // Ustaw kolor tła wykresu na przezroczysty
+      font: {
+        color: '#ffffff'  // Ustaw kolor tekstu na biały
+      },
+      textfont: {
+        color: '#ffffff'  // Ustaw kolor tekstu wewnątrz wykresu na biały
+      }
+    };
+
+    Plotly.newPlot('plotly-pie-chart', plotlyData, plotlyLayout);
+  </script>
+{% endblock %}
