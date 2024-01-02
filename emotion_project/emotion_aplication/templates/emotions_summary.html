@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="background-color: #171923;">
+    <a href="{% url 'user_posts' %}" style="text-decoration: none; color: white; font-size: 1.5rem; margin-left: 3rem; margin-top: 1rem;">
+      &#x2190; Back to My posts
+    </a>
+</div>
+
+  <div style="min-height: 100vh; align-items: center; justify-content: center; background: #171923;">
+     <div>
+       <h1 style="font-size: 2rem; font-family: 'Inter', sans-serif; color: #edf2f7; margin-bottom: 1rem;" class="text-center">Emotions Summary</h1>
+       <div>
+          <div id="emotionsChart" style="max-width: 700px; margin: auto;"></div>
+       </div>
+     </div>
+  </div>
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var data = [{
+        x: {{ labels|safe }},
+        y: {{ data|safe }},
+        type: 'bar',
+        marker: {
+          color: [
+            'rgba(255,99,132,0.43)',
+            'rgba(54,162,235,0.44)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+          ],
+          line: {
+            color: [
+              'rgb(255,99,132)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            width: 1
+          }
+        }
+      }];
+
+      var layout = {
+        // title: 'Emotions Summary',
+        xaxis: {
+          title: 'Emotion',
+        },
+        yaxis: {
+          title: 'Count',
+          autorange: true,
+          type: 'linear'
+        },
+      font: {
+        color: '#ffffff'
+      },
+      textfont: {
+        color: '#ffffff'
+      },
+        paper_bgcolor: '#171923',
+        plot_bgcolor: '#171923'
+      };
+
+      Plotly.newPlot('emotionsChart', data, layout);
+    });
+  </script>
+
+{% endblock %}

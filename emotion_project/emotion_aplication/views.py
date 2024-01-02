@@ -1,6 +1,8 @@
 import re
 from collections import namedtuple
 from operator import attrgetter
+
+from django.db.models import Count
 from sklearn import svm
 import joblib
 from nltk import word_tokenize
@@ -98,21 +100,6 @@ def user_posts(request):
     return render(request, 'user_posts.html', context)
 
 
-def create_post_view(request):
-    if request.method == 'POST':
-        # Obsługa dodawania nowego posta
-        serializer = PostSerializer(data=request.POST)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return redirect('user_posts')
-        else:
-            return JsonResponse({"error": "Invalid form data."}, status=400)
-    elif request.method == 'GET':
-        return render(request, 'create_post.html')
-    else:
-        return JsonResponse({"error": "Invalid request method."}, status=400)
-
-
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
@@ -123,24 +110,6 @@ def delete_post(request, post_id):
         messages.error(request, 'You do not have permission to delete this post.')
 
     return HttpResponseRedirect(reverse('user_posts'))
-
-
-def edit_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-
-    if request.user == post.user:
-        if request.method == 'POST':
-            post.title = request.POST.get('title')
-            post.content = request.POST.get('content')
-            post.save()
-
-            messages.success(request, 'Post updated successfully.')
-            return HttpResponseRedirect(reverse('user_posts'))
-        else:
-            return render(request, 'edit_post.html', {'post': post})
-    else:
-        messages.error(request, 'You do not have permission to edit this post.')
-        return HttpResponseRedirect(reverse('user_posts'))
 
 
 loaded_svm_model = joblib.load('emotion_aplication/svm_model.joblib')
@@ -198,3 +167,70 @@ def visualize_post(request, post_id):
     }
 
     return render(request, 'visualize_post.html', context)
+
+
+def analyze_emotion(text):
+    result = preprocess_text(text)
+
+    vectorized_new_text = loaded_svm_vectorizer.transform([result])
+
+    predictions_proba_svm = loaded_svm_model.predict_proba(vectorized_new_text)
+    predicted_label_svm = loaded_svm_label_encoder.inverse_transform(predictions_proba_svm.argmax(axis=1))[0]
+
+    return predicted_label_svm
+
+
+def create_post_view(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+
+        emotion_result = analyze_emotion(content)
+        new_post = Post.objects.create(title=title, content=content, emotion_result=emotion_result, user=request.user)
+        new_post.save()
+
+        return redirect('user_posts')
+
+    elif request.method == 'GET':
+        return render(request, 'create_post.html')
+
+    else:
+        return JsonResponse({"error": "Invalid request method."}, status=400)
+
+
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.user == post.user:
+        if request.method == 'POST':
+            post.title = request.POST.get('title')
+            post.content = request.POST.get('content')
+
+            analyzed_emotion = analyze_emotion(post.content)
+            post.emotion_result = analyzed_emotion
+
+            post.save()
+
+            messages.success(request, 'Post updated successfully.')
+            return HttpResponseRedirect(reverse('user_posts'))
+        else:
+            return render(request, 'edit_post.html', {'post': post})
+    else:
+        messages.error(request, 'You do not have permission to edit this post.')
+        return HttpResponseRedirect(reverse('user_posts'))
+
+
+def user_emotions_summary(request):
+    user_posts = Post.objects.filter(user=request.user, emotion_result__isnull=False)
+
+    emotions_summary = user_posts.values('emotion_result').annotate(count=Count('emotion_result'))
+
+    labels = [emotion['emotion_result'] for emotion in emotions_summary]
+    data = [emotion['count'] for emotion in emotions_summary]
+
+    context = {
+        'labels': labels,
+        'data': data,
+    }
+
+    return render(request, 'emotions_summary.html', context)
