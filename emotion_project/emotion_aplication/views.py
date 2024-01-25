@@ -125,8 +125,6 @@ def preprocess_text(text):
     result = unidecode.unidecode(result)
     stop_words = stopwords.words("english")
     word_list = word_tokenize(result)
-    # # english stemmer
-    # ps = SnowballStemmer("english")
 
     stemmed_sentence = ""
     for word in word_list:
